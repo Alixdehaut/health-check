@@ -1,0 +1,8 @@
+includes:
+    - vendor/phpstan/phpstan-symfony/extension.neon
+parameters:
+  autoload_directories:
+    - %rootDir%/../../../src
+    - %rootDir%/../../../src/DependencyInjection/Configuration.php
+  excludes_analyse:
+    - %rootDir%/../../../src/DependencyInjection/Configuration.php

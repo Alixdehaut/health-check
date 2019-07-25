@@ -1,0 +1,4 @@
+services:
+  Tseguier\HealthCheckBundle\Controller\HealthCheckController:
+    autoconfigure: true
+    arguments: [!tagged health_checker.service]
