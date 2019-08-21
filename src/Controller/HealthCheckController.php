@@ -7,6 +7,7 @@ namespace Tseguier\HealthCheckBundle\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
+use Tseguier\HealthCheckBundle\HealthCheckInterface;
 
 /**
  * @Route("/healthcheck")
@@ -14,19 +15,19 @@ use Swagger\Annotations as SWG;
 final class HealthCheckController
 {
     /**
-     * @var array|iterable
+     * @var HealthCheckInterface
      */
-    private $healthCheckers = [];
+    private $healthChecker;
 
     /**
      * @var string
      */
     private $dateFormat;
 
-    public function __construct(iterable $healthCheckers, string $dateFormat)
+    public function __construct(HealthCheckInterface $healthChecker, string $dateFormat)
     {
         $this->dateFormat = $dateFormat;
-        $this->healthCheckers = $healthCheckers;
+        $this->healthChecker = $healthChecker;
     }
 
     /**
@@ -59,16 +60,9 @@ final class HealthCheckController
     public function getHealth(): JsonResponse
     {
         $data = [
-          'status' => true,
+          'status' => $this->healthChecker->checkHealth()->getStatus(),
           'timestamp' => date($this->dateFormat),
         ];
-
-        foreach ($this->healthCheckers as $healthService) {
-            $info = $healthService->checkHealth();
-            if (!$info->getStatus()) {
-                $data['status'] = false;
-            }
-        }
 
         return new JsonResponse($data, $data['status'] ? 200 : 503);
     }
