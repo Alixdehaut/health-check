@@ -7,6 +7,7 @@ namespace HealthCheckTest\Controller;
 use PHPUnit\Framework\TestCase;
 use Tseguier\HealthCheckBundle\Controller\HealthCheckController;
 use Tseguier\HealthCheckBundle\Dto\HealthData;
+use Tseguier\HealthCheckBundle\HealthCheckerAggregate;
 
 class SuccessfulChecker {
     public function checkHealth()
@@ -27,7 +28,8 @@ class ControllerTest extends TestCase
     public function testSuccess()
     {
         $checker = new SuccessfulChecker();
-        $controller = new HealthCheckController([$checker], 'Y-m-d H:i:s T');
+        $aggregate = new HealthCheckerAggregate([$checker]);
+        $controller = new HealthCheckController($aggregate, 'Y-m-d H:i:s T');
         $result = $controller->getHealth();
         $body = json_decode($result->getContent());
 
@@ -39,7 +41,8 @@ class ControllerTest extends TestCase
     public function testFail()
     {
         $checker = new FailfulChecker();
-        $controller = new HealthCheckController([$checker], 'Y-m-d H:i:s T');
+        $aggregate = new HealthCheckerAggregate([$checker]);
+        $controller = new HealthCheckController($aggregate, 'Y-m-d H:i:s T');
         $result = $controller->getHealth();
         $body = json_decode($result->getContent());
 
